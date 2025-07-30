@@ -1,0 +1,22 @@
+name: stroke-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  - pandas
+  - numpy
+  - scikit-learn
+  - mlflow
+  - optuna
+  - prefect
+  - fastapi
+  - uvicorn
+  - pytest
+  - black
+  - flake8
+  - isort
+  - pip:
+    - kaggle
+    - boto3
+    - requests

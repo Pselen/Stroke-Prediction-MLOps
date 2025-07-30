@@ -1,0 +1,12 @@
+pandas
+numpy
+scikit-learn
+mlflow
+optuna
+prefect
+fastapi
+uvicorn
+joblib
+boto3
+requests
+fire

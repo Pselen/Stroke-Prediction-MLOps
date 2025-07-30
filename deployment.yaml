@@ -1,0 +1,8 @@
+flows:
+  - prefect import-path: "src.monitor:daily_drift_check"
+    name: daily-drift
+    work-pool-name: default
+    schedule:
+      type: CronSchedule
+      cron: "0 0 * * *"
+      timezone: "UTC"
