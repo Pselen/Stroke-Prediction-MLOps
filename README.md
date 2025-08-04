@@ -1,12 +1,25 @@
-# Stroke-Prediction-MLOps
 # Stroke Prediction MLOps Pipeline
 
-An end-to-end MLOps project to predict patient stroke risk using demographic and medical data, built with best practices for reproducibility, cloud readiness, CI/CD, and monitoring.
-
----
-
 ## 1. Problem Description  
-Stroke is a leading cause of death and disability worldwide. Early risk prediction enables targeted preventive care. This project trains a Random Forest model on Kaggle’s “Stroke Prediction” dataset (≈5 000 samples), using features like age, BMI, glucose level, comorbidities, and lifestyle factors, to output a binary stroke/no-stroke prediction.  
+
+Stroke is the second leading cause of death worldwide and a major driver of long-term disability, costing health systems billions each year. Timely identification of individuals at high risk enables preventive interventions—such as lifestyle coaching, medication adjustments, and regular monitoring—that can reduce both incidence and severity.
+
+In this project, we leverage the publicly available Kaggle **Stroke Prediction** dataset (≈5 000 patients) to build a machine learning model that predicts the probability of a stroke event. Each patient record includes:
+
+- **Demographics**: age, gender, marital status, residence type  
+- **Health indicators**: body mass index (BMI), average glucose level  
+- **Comorbidities**: hypertension, heart disease  
+- **Lifestyle factors**: work type, smoking status  
+
+Our goal is two-fold:
+
+1. **Accurate risk stratification**  
+   Train and tune a robust Random Forest pipeline (featuring median imputation, standard scaling, and one-hot encoding) to maximize ROC AUC.  
+
+2. **Operational readiness**  
+   Wrap the model in a production-grade FastAPI service, track all experiments and inferences in MLflow, and implement automated drift monitoring to ensure ongoing reliability.
+
+By deploying this end-to-end MLOps pipeline, healthcare providers and researchers gain a reproducible, deployable tool to flag high-risk patients for early intervention, ultimately helping save lives and reduce healthcare costs.  
 
 ---
 
@@ -19,15 +32,27 @@ Stroke is a leading cause of death and disability worldwide. Early risk predicti
 ---
 
 ## 3. Experiment Tracking & Model Registry  
-- **MLflow** for tracking hyperparameters, metrics, artifacts.  
-- **Model registry** used: best pipeline (preprocessor+classifier) registered as `StrokeRF`.  
+![MLflow UI showing experiments and runs](docs/images/mlflow.png)  
+*Figure: MLflow dashboard with StrokePrediction experiments and registered model versions.*
+
+We use MLflow to:
+
+- Log every training run’s parameters, metrics (accuracy, ROC AUC), and artifacts (preprocessor, model)  
+- Register the best pipeline as **StrokeRF** in the Model Registry  
+- Serve both training and inference telemetry under defined experiments  
 > **Score (4/4):** Both experiment tracking and registry used.
 
 ---
 
 ## 4. Workflow Orchestration  
-- **Prefect 2** schedules daily drift checks at midnight UTC.  
-- **Drift‐check flow** fetches recent telemetry, computes data‐drift vs. training baseline, logs back to MLflow.  
+![Prefect UI showing deployments and flow runs](docs/images/prefect.png)  
+*Figure: Prefect Orion dashboard with the Daily-Drift-Check deployment scheduled at midnight UTC.*
+
+We orchestrate our daily drift-check via Prefect:
+
+- **Deployment**: `Daily-Drift-Check/daily-drift` runs every midnight UTC  
+- **Worker**: polls the `default-queue` and executes fetch → compute_drift → log_drift  
+- **UI**: monitors flow state, logs, and next scheduled runs  
 > **Score (4/4):** Fully deployed scheduled workflow.
 
 ---
