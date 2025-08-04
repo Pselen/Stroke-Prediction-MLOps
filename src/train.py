@@ -10,6 +10,8 @@ import mlflow
 import mlflow.sklearn
 
 from data_prep import load_data, prepare_data, build_preprocessor
+from data_prep import save_baseline_stats
+
 
 # ─── MLflow Tracking URI ───────────────────────────────────────
 tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5001")
@@ -27,13 +29,14 @@ def main(
     # 1. Load & split data
     df = load_data(input_path)
     X_train, X_test, y_train, y_test = prepare_data(df, test_size, random_state)
+    save_baseline_stats(X_train)
 
     # 2. Build preprocessing pipeline
     preprocessor = build_preprocessor()
 
     # 3. Define the full pipeline: preprocessing + classifier
     clf = RandomForestClassifier(
-        n_estimators=n_estimators,
+        n_estimators=n_estimators, 
         max_depth=max_depth,
         min_samples_split=min_samples_split,
         min_samples_leaf=min_samples_leaf,
