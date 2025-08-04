@@ -10,3 +10,4 @@ joblib
 boto3
 requests
 fire
+uvicorn[standard]

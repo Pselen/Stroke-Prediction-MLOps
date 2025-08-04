@@ -1,7 +1,7 @@
 flows:
-  - prefect import-path: "src.monitor:daily_drift_check"
-    name: daily-drift
-    work-pool-name: default
+  - import-path: "src.monitor:daily_drift_check"
+    name: "daily-drift"
+    work_queue_name: "default-queue"
     schedule:
       type: CronSchedule
       cron: "0 0 * * *"
