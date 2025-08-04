@@ -1,0 +1,7 @@
+pytest>=7.0
+pandas>=2.0
+numpy>=1.25
+fastapi>=0.99
+requests>=2.31
+mlflow>=2.9
+scikit-learn>=1.2

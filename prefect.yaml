@@ -48,6 +48,18 @@ deployments:
     timezone: UTC
     day_or: true
     active: true
+  - cron: 0 0 * * *
+    timezone: UTC
+    day_or: true
+    active: true
+  - cron: 0 0 * * *
+    timezone: UTC
+    day_or: true
+    active: true
+  - cron: 0 0 * * *
+    timezone: UTC
+    day_or: true
+    active: true
 flows:
 - import-path: src.monitor:daily_drift_check
   name: daily-drift

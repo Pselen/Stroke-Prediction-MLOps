@@ -1,15 +1,16 @@
 import os
 import time
 from time import perf_counter
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-import pandas as pd
+
 import mlflow
+import pandas as pd
+from fastapi import FastAPI
 from mlflow.tracking import MlflowClient
+from pydantic import BaseModel
 
 # ─── Configuration ────────────────────────────────────────────
-MLFLOW_URI  = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5001")
-MODEL_NAME  = os.getenv("MODEL_NAME", "StrokeRF")
+MLFLOW_URI = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5001")
+MODEL_NAME = os.getenv("MODEL_NAME", "StrokeRF")
 MODEL_STAGE = os.getenv("MODEL_STAGE", "Production")
 MONITOR_EXP = "StrokePrediction-Monitoring"
 
@@ -31,6 +32,7 @@ mlflow.set_experiment(MONITOR_EXP)
 # ─── FastAPI setup ───────────────────────────────────────────
 app = FastAPI()
 
+
 class StrokeFeatures(BaseModel):
     age: float
     gender: str
@@ -43,10 +45,12 @@ class StrokeFeatures(BaseModel):
     bmi: float
     smoking_status: str
 
+
 @app.get("/health")
 def health():
     # Quick check: service is up and we know which model version we'd serve
     return {"status": "ok", "model_version": mv.version}
+
 
 @app.post("/predict")
 def predict(features: StrokeFeatures):
@@ -71,7 +75,7 @@ def predict(features: StrokeFeatures):
 
         # 3️⃣ Predict & measure latency
         start = perf_counter()
-        prob  = pipeline.predict(df).squeeze()
+        prob = pipeline.predict(df).squeeze()
         latency_ms = (perf_counter() - start) * 1000
         mlflow.log_metric("inference_latency_ms", latency_ms)
 
@@ -80,8 +84,4 @@ def predict(features: StrokeFeatures):
 
     # Threshold for class
     pred = int(prob >= 0.5)
-    return {
-        "prediction": pred,
-        "probability": float(prob),
-        "latency_ms": latency_ms
-    }
+    return {"prediction": pred, "probability": float(prob), "latency_ms": latency_ms}
