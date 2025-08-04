@@ -45,6 +45,15 @@ def log_drift(overall: float, details: dict):
 
 @flow(name="Daily-Drift-Check")
 def daily_drift_check():
-    df_recent, = fetch_recent_data_metrics().future().result(),  # run tasks in parallel
+    # 1) fetch the recent metrics (runs in‐line)
+    df_recent = fetch_recent_data_metrics()
+
+    # 2) compute the drift
     overall, details = compute_drift(df_recent)
+
+    # 3) log the drift back to MLflow
     log_drift(overall, details)
+
+if __name__ == "__main__":
+    # no in-code deploy block; we'll use `prefect deploy` from the CLI
+    daily_drift_check()
